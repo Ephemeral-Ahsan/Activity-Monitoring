@@ -9,33 +9,30 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-##Step 1
+## step 1
 
-##Code for reading in the dataset and/or processing the data
+##Code for reading in the dataset and processing the data
 
 
 setwd("C:\\Users\\A S U S\\Desktop\\project")
 activity<-read.csv("activity.csv")
 sum(is.na(activity$steps))
 
-
 activity$date<-ymd(activity$date)
-
 
 ##or,
 activity$date<- as.Date(activity$date, format = "%Y-%m-%d")
 
 ```
-
 a2<-data.frame(tapply(activity$steps,activity$date,sum,na.rm=TRUE))
 
 a2$date<-rownames(a2)
 rownames(a2)<-NULL
 names(a2)[[1]]<-"Total Steps"
 
+## step 2
 
-##Histogram of total steps
-
+#Histogram of total steps
 
 ggplot(a2,aes(`Total Steps`))+ geom_histogram()+ ylab("Total Steps")+xlab("Date")+ggtitle("Total Steps by date")
 
@@ -44,6 +41,8 @@ dev.copy(png,"plot1.png")
 dev.off()
 
 ```
+
+## step 3
 a3<-data.frame(round(tapply(activity$steps,activity$date,mean,na.rm=TRUE),2))
 a3$date<-rownames(a3)
 names(a3)[[1]]<-"Mean Steps"
@@ -53,7 +52,7 @@ a3$median<-temp$`Median Steps`
 a3<-a3 %>% select(date,`Mean Steps`,median)
 
 ```
-
+## step 4
 ##Time series plot of the average number of steps taken
 
 ```
@@ -61,10 +60,7 @@ a4<-a3
 a4$date<-as.Date(a4$date,format="%Y-%m-%d")
 ggplot(a4,aes(x=a4$date,y=a4$`Mean Steps`))+geom_bar(stat="identity")+scale_x_date()+ylab("Mean Steps Every day")+xlab("Date")+ggtitle("Mean Steps by Date")
 
-
-
-
-##Step 5
+## step 5
 ##The 5-minute interval that, on average, contains the maximum number of steps
 
 ```
@@ -74,7 +70,7 @@ a5<-aggregate(data=a5,steps~interval,FUN="max")
 ```
 ====
 
-##Step 6
+## step 6
 Code to describe and show a strategy for imputing missing data
 There are multiple strategies to deal with multiple value imputations.
 
@@ -102,14 +98,13 @@ plot(y=a6.2$Missing,x=a6.2$Interval,main="Missing Value Distribution by Interval
 table(activity$date)
 ```
 
-By this point, from the plot, that the missing values have a very disctinct pattern. For every interval, there are consistantly 8 missing values. For the date, there are consistantly 288 missing values. And in total, there are 8 dates that have missing value. We don't exactly know the cause for these missing values but there's a pattern. For that matter, we can see that the mean value imputation is appropriate.
+By this point, from the plot, that the missing values have a very disctinct pattern. For every interval, there are consistantly 8 missing values. For the date, there are consistantly 288 missing values. And in total, there are 8 dates that have missing value.
 
-We can see that every date has 288 data points. It means that the 8 dates have no data points at all what so ever. We can refine the analysis by looking at these missing values depending on their Weekday and interval parameters to matach with the average. 
-
+We can see that every date has 288 data points. It means that the 8 dates have no data points at all what so ever. 
 ``` 
 
-#Dates that have missing values 
-library(lubridate)
+# #Dates that have missing values 
+
 
 a6.3<-as.data.frame(a6.1) %>% select(date,Missing) %>% arrange(desc(Missing))
 a6.3<-a6.3[which(a6.3$Missing!=0),]
@@ -142,7 +137,7 @@ names(a6.6)[[4]]<-"Steps"
 ```
 ===
 
-## Step 7
+## step 7
 Histogram of the total number of steps taken each day after missing values are imputed
 
 ``` 
@@ -156,7 +151,7 @@ dev.off()
 
 ```
 
-## Step 8
+## step 8
 
 ##Panel plot comparing the average number of steps taken per 5-minute interval across weekdays and weekends
 
